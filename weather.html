@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Weather</title>
+    <style>
+      html {
+        font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        text-align: center;
+      }
+      
+      body {
+        margin: 0 auto;
+      }
+      
+    </style>
+  </head>
+
+  <body>
+    <h1 id="temperature"></h1>
+    <h2 id="description"></h2>
+    <p id="location"></p>
+  </body>
+
+  <script>
+    function getWeather() {
+      let temperature = document.getElementById("temperature");
+      let description = document.getElementById("description");
+      let location = document.getElementById("location");
+    
+      let api = "https://api.openweathermap.org/data/2.5/weather";
+      let apiKey = "f146799a557e8ab658304c1b30cc3cfd";
+    
+      location.innerHTML = "Locating...";
+    
+      navigator.geolocation.getCurrentPosition(success, error);
+    
+      function success(position) {
+        latitude = position.coords.latitude;
+        longitude = position.coords.longitude;
+    
+        let url =
+          api +
+          "?lat=" +
+          latitude +
+          "&lon=" +
+          longitude +
+          "&appid=" +
+          apiKey +
+          "&units=metric"; // Use metric units for Celsius
+    
+        fetch(url)
+          .then(response => response.json())
+          .then(data => {
+            console.log(data);
+            let tempCelsius = data.main.temp;
+            let tempFahrenheit = (tempCelsius * 9) / 5 + 32; // Convert Celsius to Fahrenheit
+            temperature.innerHTML = tempCelsius + "° C / " + tempFahrenheit.toFixed(2) + "° F";
+            location.innerHTML =
+              data.name + " (" + latitude + "°, " + longitude + "°)";
+            description.innerHTML = data.weather[0].main;
+          });
+      }
+    
+      function error() {
+        location.innerHTML = "Unable to retrieve your location";
+      }
+    }
+    
+    getWeather();
+    
+  </script>
+</html>
